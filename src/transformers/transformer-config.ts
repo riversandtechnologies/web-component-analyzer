@@ -8,4 +8,5 @@ export interface TransformerConfig {
 		headerLevel?: number;
 	};
 	inlineTypes?: boolean;
+	skipResolved?: boolean;
 }

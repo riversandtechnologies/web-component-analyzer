@@ -12,4 +12,5 @@ export interface AnalyzerOptions {
 	flavors?: AnalyzerFlavor[];
 	config?: AnalyzerConfig;
 	verbose?: boolean;
+	skipResolved?: boolean;
 }

@@ -26,7 +26,7 @@ export function analyzeComponentDeclaration(initialDeclarationNodes: Node[], con
 	const inheritanceTree = discoverInheritance(initialDeclarationNodes, context);
 
 	// Find unique resolved nodes in the inheritance tree
-	const declarationNodes = getUniqueResolvedNodeForInheritanceTree(inheritanceTree);
+	const declarationNodes = getUniqueResolvedNodeForInheritanceTree(inheritanceTree, context.skipResolved);
 
 	// Add initial declaration nodes to the set (nodes that aren't the main declaration node)
 	for (const node of initialDeclarationNodes) {

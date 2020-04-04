@@ -19,6 +19,7 @@ export interface AnalyzerCliConfig {
 	features?: ComponentFeature[];
 	discoverLibraryFiles?: boolean;
 	analyzeGlobalFeatures?: boolean;
+	skipResolved?: boolean;
 
 	markdown?: {
 		headerLevel?: number;
