@@ -5,6 +5,7 @@ import { ComponentDefinition } from "../../analyze/types/component-definition";
 import { ComponentCssPart } from "../../analyze/types/features/component-css-part";
 import { ComponentCssProperty } from "../../analyze/types/features/component-css-property";
 import { ComponentEvent } from "../../analyze/types/features/component-event";
+import { ComponentMethod } from "../../analyze/types/features/component-method";
 import { ComponentMember } from "../../analyze/types/features/component-member";
 import { ComponentSlot } from "../../analyze/types/features/component-slot";
 import { JsDoc } from "../../analyze/types/js-doc";
@@ -64,6 +65,10 @@ function definitionToHtmlDataTag(definition: ComponentDefinition, checker: TypeC
 		filterVisibility(config.visibility, declaration.members).map(d => componentMemberToHtmlDataProperty(d, checker, config))
 	);
 
+	const methods = arrayDefined(
+		filterVisibility(config.visibility, declaration.methods).map(d => componentMethodToHtmlDataAttribute(d, checker, config))
+	);
+
 	const events = arrayDefined(filterVisibility(config.visibility, declaration.events).map(e => componentEventToHtmlDataEvent(e, checker)));
 
 	const slots = arrayDefined(declaration.slots.map(e => componentSlotToHtmlDataSlot(e, checker)));
@@ -78,6 +83,7 @@ function definitionToHtmlDataTag(definition: ComponentDefinition, checker: TypeC
 		description: getDescriptionFromJsDoc(declaration.jsDoc),
 		attributes: attributes.length === 0 ? undefined : attributes,
 		properties: properties.length === 0 ? undefined : properties,
+		methods: methods.length === 0 ? undefined : methods,
 		events: events.length === 0 ? undefined : events,
 		slots: slots.length === 0 ? undefined : slots,
 		cssProperties: cssProperties.length === 0 ? undefined : cssProperties,
@@ -147,6 +153,18 @@ function componentMemberToHtmlDataProperty(member: ComponentMember, checker: Typ
 		default: member.default != null ? JSON.stringify(member.default) : undefined,
 		deprecated: member.deprecated === true || undefined,
 		deprecatedMessage: typeof member.deprecated === "string" ? member.deprecated : undefined
+	};
+}
+
+function componentMethodToHtmlDataAttribute(member: ComponentMethod, checker: TypeChecker, config: TransformerConfig): HtmlDataAttribute | undefined {
+	if (member.name == null) {
+		return undefined;
+	}
+
+	return {
+		name: member.name,
+		description: getDescriptionFromJsDoc(member.jsDoc),
+		type: getTypeHintFromType(member.type?.(), checker, config)
 	};
 }
 

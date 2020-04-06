@@ -17,4 +17,5 @@ export interface AnalyzerVisitContext {
 		featureCollection: WeakMap<Node, ComponentFeatureCollection>;
 		general: Map<unknown, unknown>;
 	};
+	skipResolved: boolean;
 }

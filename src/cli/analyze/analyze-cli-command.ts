@@ -102,7 +102,8 @@ function transformResults(results: AnalyzerResult[] | AnalyzerResult, program: P
 		inlineTypes: config.inlineTypes ?? false,
 		visibility: config.visibility ?? "public",
 		markdown: config.markdown,
-		cwd: config.cwd
+		cwd: config.cwd,
+		skipResolved: config.skipResolved ?? false
 	};
 
 	return transformAnalyzerResult(format, results, program, transformerConfig);

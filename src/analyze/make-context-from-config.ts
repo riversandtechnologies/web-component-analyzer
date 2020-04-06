@@ -33,6 +33,7 @@ export function makeContextFromConfig(options: AnalyzerOptions): AnalyzerVisitCo
 			analyzeLib: options.config?.analyzeLib ?? false,
 			excludedDeclarationNames: options.config?.excludedDeclarationNames ?? [],
 			features: options.config?.features ?? ALL_COMPONENT_FEATURES
-		}
+		},
+		skipResolved: options.skipResolved ? options.skipResolved : false
 	};
 }

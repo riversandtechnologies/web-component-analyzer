@@ -144,10 +144,12 @@ interface VisitInheritanceTreeContext {
  * @param treeClause
  * @param context
  */
-function visitInheritanceTreeClause(treeClause: InheritanceTreeClause, context: VisitInheritanceTreeContext) {
+function visitInheritanceTreeClause(treeClause: InheritanceTreeClause, context: VisitInheritanceTreeContext, skipResolved?: Boolean) {
 	context.emitTreeClause?.(treeClause);
-	treeClause.resolved?.forEach(treeNode => visitInheritanceTreeNode(treeNode, context));
-	treeClause.horizontalInherits?.forEach(clause => visitInheritanceTreeClause(clause, context));
+	if (!skipResolved) {
+		treeClause.resolved?.forEach(treeNode => visitInheritanceTreeNode(treeNode, context, false));
+	}
+	treeClause.horizontalInherits?.forEach(clause => visitInheritanceTreeClause(clause, context, skipResolved));
 }
 
 /**
@@ -155,20 +157,24 @@ function visitInheritanceTreeClause(treeClause: InheritanceTreeClause, context: 
  * @param treeNode
  * @param context
  */
-function visitInheritanceTreeNode(treeNode: InheritanceTreeNode, context: VisitInheritanceTreeContext) {
+function visitInheritanceTreeNode(treeNode: InheritanceTreeNode, context: VisitInheritanceTreeContext, skipResolved?: Boolean) {
 	context.emitTreeNode?.(treeNode);
-	treeNode.inherits?.forEach(clause => visitInheritanceTreeClause(clause, context));
+	treeNode.inherits?.forEach(clause => visitInheritanceTreeClause(clause, context, skipResolved));
 }
 
 /**
  * Gets all unique resolved nodes in an inheritance tree
  * @param tree
  */
-export function getUniqueResolvedNodeForInheritanceTree(tree: InheritanceTreeNode): Set<Node> {
+export function getUniqueResolvedNodeForInheritanceTree(tree: InheritanceTreeNode, skipResolved?: Boolean): Set<Node> {
 	const nodes = new Set<Node>();
-	visitInheritanceTreeNode(tree, {
-		emitTreeNode: treeNode => nodes.add(treeNode.node)
-	});
+	visitInheritanceTreeNode(
+		tree,
+		{
+			emitTreeNode: treeNode => nodes.add(treeNode.node)
+		},
+		skipResolved
+	);
 	return nodes;
 }
 
@@ -176,15 +182,19 @@ export function getUniqueResolvedNodeForInheritanceTree(tree: InheritanceTreeNod
  * Gets all mixins in an inheritance tree
  * @param tree
  */
-export function getMixinsForInheritanceTree(tree: InheritanceTreeNode): Set<string> {
+export function getMixinsForInheritanceTree(tree: InheritanceTreeNode, skipResolved?: Boolean): Set<string> {
 	const mixins = new Set<string>();
-	visitInheritanceTreeNode(tree, {
-		emitTreeClause: treeClause => {
-			if (treeClause.kind === "mixin") {
-				mixins.add(treeClause.identifier.text);
+	visitInheritanceTreeNode(
+		tree,
+		{
+			emitTreeClause: treeClause => {
+				if (treeClause.kind === "mixin") {
+					mixins.add(treeClause.identifier.text);
+				}
 			}
-		}
-	});
+		},
+		skipResolved ? skipResolved : false
+	);
 	return mixins;
 }
 
@@ -192,14 +202,18 @@ export function getMixinsForInheritanceTree(tree: InheritanceTreeNode): Set<stri
  * Gets all extend nodes in an inheritance tree
  * @param tree
  */
-export function getExtendsForInheritanceTree(tree: InheritanceTreeNode): Set<string> {
+export function getExtendsForInheritanceTree(tree: InheritanceTreeNode, skipResolved?: Boolean): Set<string> {
 	const ext = new Set<string>();
-	visitInheritanceTreeNode(tree, {
-		emitTreeClause: treeClause => {
-			if (treeClause.kind === "class" || treeClause.kind === "interface") {
-				ext.add(treeClause.identifier.text);
+	visitInheritanceTreeNode(
+		tree,
+		{
+			emitTreeClause: treeClause => {
+				if (treeClause.kind === "class" || treeClause.kind === "interface") {
+					ext.add(treeClause.identifier.text);
+				}
 			}
-		}
-	});
+		},
+		skipResolved
+	);
 	return ext;
 }

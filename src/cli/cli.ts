@@ -84,6 +84,10 @@ o {tagname}: The element's tag name`,
 			boolean: true,
 			hidden: true
 		})
+		.option("skipResolved", {
+			boolean: true,
+			hidden: true
+		})
 
 		// This options makes it possible to use "markdown.<sub-option>" in "strict mode"
 		.option("markdown", {

@@ -68,7 +68,8 @@ export async function analyzeGlobs(
 			config: {
 				features: config.features,
 				analyzeGlobalFeatures: config.analyzeGlobalFeatures
-			}
+			},
+			skipResolved: config.skipResolved
 		});
 
 		logVerbose(() => stripTypescriptValues(result, program.getTypeChecker()), config);
